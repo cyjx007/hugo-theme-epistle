@@ -548,8 +548,10 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
   var printBtn = document.querySelector('[data-tool="print"]');
 
   function syncTools() {
+    var dark = root.dataset.theme === 'dark';
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#080706' : '#E7E1D6');
     if (themeBtn) {
-      var dark = root.dataset.theme === 'dark';
       themeBtn.setAttribute('aria-pressed', dark ? 'true' : 'false');
       themeBtn.textContent = dark ? '日读' : '夜读';
       themeBtn.setAttribute('title', dark ? '切回白天' : '夜里读信：台灯下的一小圈');

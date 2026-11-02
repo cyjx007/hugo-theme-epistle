@@ -21,6 +21,7 @@
    --age: 0（今天写的）→ 1（六年以上的旧信）。
    插值放在 body 上（自定义属性在声明处求值，--age 也在 body 上）。 */
 :root {
+  color-scheme: light; /* 让滚动条、表单控件跟着手选的主题走，而不是只看系统 */
   --age: 0;
 
   /* 新纸 / 旧纸 */
@@ -29,12 +30,15 @@
   /* 新墨 / 褪色墨 */
   --ink-fresh: #1B2230;
   --ink-aged: #5A5242;
-  /* 小字（日期、注） */
-  --meta-fresh: #7B7566;
-  --meta-aged: #6E6656; /* 旧信上也别掉到 4.5:1 以下 */
+  /* 小字（日期、注）：留出余量，别压着 4.5:1 走 */
+  --meta-fresh: #6A6354; /* 新纸 5.86:1 */
+  --meta-aged: #645D4E;  /* 旧纸 5.19:1 */
   /* 朱墨（链接、印记） */
   --accent-fresh: #9A3B2A;
   --accent-aged: #8E4B33;
+  /* diff 高亮（夜间要单独给亮色） */
+  --diff-del: #8A2B1C;
+  --diff-add: #2C6A46;
 
   --desk: #E7E1D6;
   --desk-glow: #F4EFE6;
@@ -48,9 +52,11 @@
     0 2px 6px rgba(60, 45, 20, 0.05),
     0 22px 48px -22px rgba(60, 45, 20, 0.42);
 
-  --font-body: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Noto Serif SC",
-    "Source Han Serif SC", "Songti SC", "STSong", "SimSun", "宋体", serif;
-  --font-title: "Kaiti SC", "Kaiti TC", "STKaiti", "KaiTi", "楷体", "AR PL UKai CN", serif;
+  --font-body: "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
+    "Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", "Source Han Serif CN",
+    "Songti SC", "STSong", "SimSun", "宋体", serif;
+  --font-title: "Kaiti SC", "Kaiti TC", "STKaiti", "KaiTi", "楷体",
+    "LXGW WenKai", "AR PL UKai CN", "Noto Serif CJK SC", "Noto Serif SC", serif;
   --font-mono: "SFMono-Regular", "Cascadia Mono", "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace;
 
   --width-paper: 46rem;
@@ -73,6 +79,7 @@
 
 /* 夜色：不是把背景刷黑，是把灯关掉一半 */
 [data-theme="dark"] {
+  color-scheme: dark;
   --paper-fresh: #241E17;
   --paper-aged: #2A2219;
   --ink-fresh: #EFE7D6;
@@ -81,6 +88,8 @@
   --meta-aged: #877F6F;
   --accent-fresh: #E09B6E;
   --accent-aged: #BE8A6A;
+  --diff-del: #E08A7A; /* 夜纸 6.35:1 */
+  --diff-add: #7FB08A; /* 夜纸 6.66:1 */
 
   --desk: #080706;
   --desk-glow: #14100D;
@@ -121,25 +130,26 @@ body {
   }
 }
 
-/* 素纸：把纸纹、树影、楷体、灯罩全关掉，只留字 */
+/* 素纸：把纸纹、树影、楷体、灯罩全关掉，只留字。
+   去掉的是装饰，不是护眼的暖纸暖墨——纯白/纯黑留给「增强对比度」(prefers-contrast: more)。 */
 [data-plain="on"] { --font-title: var(--font-body); }
 [data-plain="on"] body {
-  --paper: #FFFFFF;
-  --ink: #14161A;
-  --meta: #4E5257;
-  --accent: #8A2B1C;
-  --hairline: rgba(20, 22, 26, 0.22);
+  --paper: #F7F1E4;
+  --ink: #2A2723;        /* 暖纸 13.20:1 */
+  --meta: #5F5849;       /* 6.26:1 */
+  --accent: #8A2B1C;     /* 7.64:1 */
+  --hairline: rgba(42, 39, 35, 0.22);
   --paper-alpha: 1;
-  --fold-dark: rgba(0, 0, 0, 0.07);
-  --shadow-paper: 0 0 0 1px rgba(0, 0, 0, 0.12);
+  --fold-dark: rgba(60, 45, 20, 0.07);
+  --shadow-paper: 0 0 0 1px rgba(60, 45, 20, 0.14);
 }
 [data-plain="on"][data-theme="dark"] body {
-  --paper: #0D0D0D;
-  --ink: #F4F4F4;
-  --meta: #C2C2C2;
-  --accent: #FFB08A;
-  --hairline: rgba(244, 244, 244, 0.28);
-  --shadow-paper: 0 0 0 1px rgba(255, 255, 255, 0.18);
+  --paper: #1E1A14;
+  --ink: #D6CCBA;        /* 夜纸 10.89:1 */
+  --meta: #A99C86;       /* 6.42:1 */
+  --accent: #E0A579;     /* 8.10:1 */
+  --hairline: rgba(214, 204, 186, 0.28);
+  --shadow-paper: 0 0 0 1px rgba(0, 0, 0, 0.55);
 }
 
 /* ── 1. 基础 ─────────────────────────────────────────────── */
@@ -154,6 +164,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh; /* 移动浏览器地址栏收起时，100vh 会多出一截 */
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: var(--line-height);
@@ -318,6 +329,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -334,6 +346,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   max-width: calc(var(--width-paper) + 6rem);
   margin: 0 auto;
   padding: 1.6rem 1.5rem 1.2rem;
+  padding-top: max(1.6rem, calc(env(safe-area-inset-top) + 1rem));
 }
 
 .site-title {
@@ -398,7 +411,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 .index-tab {
   position: fixed;
   right: -2px;
-  top: 6rem;
+  top: max(6rem, calc(env(safe-area-inset-top) + 5rem));
   z-index: 200;
   background: color-mix(in srgb, var(--paper) 82%, transparent);
   color: var(--meta);
@@ -448,6 +461,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   backdrop-filter: blur(14px) saturate(112%) brightness(1.01);
   -webkit-backdrop-filter: blur(14px) saturate(112%) brightness(1.01);
   min-height: calc(100vh - 10rem);
+  min-height: calc(100dvh - 10rem);
 }
 
 /* 纸纹：极细的纤维噪点，只在有树影时出现 */
@@ -683,11 +697,11 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 /* ── 6. 代码与表格 ───────────────────────────────────────── */
 .letter-body code {
   font-family: var(--font-mono);
-  font-size: 0.86em;
-  padding: 0.12em 0.34em;
+  font-size: 0.85em;
+  padding: 0.08em 0.26em;
   border-radius: 2px;
-  background: color-mix(in srgb, var(--ink) 7%, transparent);
-  color: color-mix(in srgb, var(--ink) 92%, var(--accent));
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  color: color-mix(in srgb, var(--ink) 86%, var(--accent));
 }
 
 .letter-body pre,
@@ -737,8 +751,8 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 }
 .chroma .nt, .chroma .na { color: color-mix(in srgb, var(--accent) 70%, var(--ink)); }
 .chroma .o, .chroma .ow, .chroma .p, .chroma .pi { color: var(--meta); }
-.chroma .gd { color: #8A2B1C; }
-.chroma .gi { color: #2C6A46; }
+.chroma .gd { color: var(--diff-del); }
+.chroma .gi { color: var(--diff-add); }
 .chroma .err { text-decoration: underline wavy; }
 
 .letter-body table {
@@ -856,6 +870,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   bottom: 0;
   width: min(320px, 85vw);
   padding: 3rem 1.25rem 2rem 1.5rem;
+  padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1rem));
   background: color-mix(in srgb, var(--paper) 97%, var(--desk));
   z-index: 100;
   overflow-y: auto;
@@ -977,6 +992,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   max-width: calc(var(--width-paper) + 6rem);
   margin: 0 auto;
   padding: 1.4rem 1.5rem 2rem;
+  padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1rem));
   font-size: 0.76rem;
   color: var(--meta);
   letter-spacing: 0.04em;
@@ -1110,9 +1126,11 @@ body[data-dappled="off"] .dappled-layer { display: none; }
     background: var(--paper);
   }
   .site-header { padding: 1rem 1.1rem 0.8rem; flex-wrap: wrap; }
+  .site-header { padding-top: max(1rem, calc(env(safe-area-inset-top) + 0.5rem)); }
   .site-title__tag { display: none; }
   .site-footer { padding: 1rem 1.1rem 1.6rem; flex-direction: column; align-items: flex-start; }
-  .index-tab { top: 4.4rem; padding: 0.65rem 0.3rem; font-size: 0.68rem; }
+  .site-footer { padding-bottom: max(1.6rem, calc(env(safe-area-inset-bottom) + 0.8rem)); }
+  .index-tab { top: max(4.4rem, calc(env(safe-area-inset-top) + 3.4rem)); padding: 0.65rem 0.3rem; font-size: 0.68rem; }
   .index-tab.is-active { transform: translateX(calc(-1 * min(280px, 85vw) - 2px)); }
   .sidebar { width: min(280px, 85vw); }
   .letter-nav { flex-direction: column; }
@@ -1123,6 +1141,11 @@ body[data-dappled="off"] .dappled-layer { display: none; }
       radial-gradient(22rem 18rem at 50% 40%, rgba(255, 198, 128, 0.10) 0%, rgba(255, 198, 128, 0) 70%),
       radial-gradient(34rem 30rem at 50% 42%, rgba(0,0,0,0) 20%, rgba(0,0,0,.3) 60%, rgba(0,0,0,.8) 100%);
   }
+
+  /* 手机上省一层：feTurbulence 位移每帧都要重算，中低端机吃不消 */
+  .dappled-svg { filter: none; }
+  .dappled-layer__bokeh { filter: blur(14px); }
+  .index-tab { backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 
 /* ── 11. 打印：一张真信纸 ───────────────────────────────── */
@@ -1260,8 +1283,13 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 
 @media (prefers-contrast: more) {
   .dappled-layer, .lamp, .paper::after { display: none !important; }
-  .paper { background: #fff; }
-  body { --ink: #000; --meta: #333; }
+
+  /* 只在各自主题里加强，别把夜里的纸刷成白色 */
+  [data-theme="light"] .paper { background: #fff; }
+  [data-theme="light"] body { --ink: #000; --meta: #333; }
+
+  [data-theme="dark"] .paper { background: #1E1A14; }
+  [data-theme="dark"] body { --ink: #F2EBDD; --meta: #CFC5B4; }
 }
 
 [data-theme="dark"] ::-webkit-scrollbar { width: 10px; }
