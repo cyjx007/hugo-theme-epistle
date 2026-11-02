@@ -125,6 +125,59 @@
   --dappled-grain-opacity: 0.14;
 }
 
+/* ── 护眼：降亮度、去蓝光，日读夜读都适用 ───────────────────
+   纸更暖更暗一档（不刺眼），墨不是纯黑而是暖褐（少蓝光），
+   对比度仍在 9:1 以上，暗到能长时间看、又不至于糊。 */
+[data-care="on"] {
+  --paper-fresh: #EDE4D3;   /* 不是纯白，暖纸，亮度约 88% */
+  --paper-aged: #E3D5BA;
+  --ink-fresh: #3A342A;     /* 暖褐墨，无蓝光；暖纸上 9.9:1 */
+  --ink-aged: #574E41;
+  --meta-fresh: #6B6252;    /* 5.1:1 */
+  --meta-aged: #645B4B;
+  --accent-fresh: #8A4B36;
+  --accent-aged: #7C4736;
+  --diff-del: #8A3A2C;
+  --diff-add: #3C6A4C;
+
+  --desk: #D9CEBB;
+  --desk-glow: #E7DDCB;
+  --seal: #9A4231;
+
+  --paper-alpha: 0.97;
+  --fold-dark: rgba(70, 55, 30, 0.16);
+  --fold-light: rgba(255, 250, 240, 0.5);
+
+  --dappled-shadow-color: rgba(60, 48, 30, 0.5);
+  --dappled-shadow-opacity: 0.6;
+  --dappled-grain-opacity: 0.07;
+}
+
+[data-care="on"][data-theme="dark"] {
+  --paper-fresh: #1C1712;   /* 比普通夜读再暗一点，暖黑 */
+  --paper-aged: #221C15;
+  --ink-fresh: #C9BEA9;     /* 压掉亮度，不刺眼；夜纸 9.7:1 */
+  --ink-aged: #A69B87;
+  --meta-fresh: #9C9280;    /* 5.8:1 */
+  --meta-aged: #8B8271;
+  --accent-fresh: #D89A6E;
+  --accent-aged: #B98A6B;
+  --diff-del: #D08A7A;
+  --diff-add: #7FA98A;
+
+  --desk: #060504;
+  --desk-glow: #100C09;
+  --seal: #B5503A;
+
+  --paper-alpha: 0.98;
+  --fold-dark: rgba(0, 0, 0, 0.42);
+  --fold-light: rgba(255, 240, 210, 0.07);
+
+  --dappled-shadow-color: rgba(0, 4, 14, 0.45);
+  --dappled-shadow-opacity: 0.6;
+  --dappled-grain-opacity: 0.1;
+}
+
 /* 插值：老信纸更黄、墨更淡、朱印更旧 */
 body {
   --paper: var(--paper-fresh);
@@ -298,8 +351,8 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 .lamp {
   position: fixed;
   inset: 0;
-  /* 0 = 压在树影之上、信纸之下：只把桌面四周压暗，别把正文也一起调暗 */
-  z-index: 0;
+  /* 3 = 压在信纸之上：中间亮、四周和上下暗，字也一起被压暗 */
+  z-index: 3;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.8s var(--ease);
@@ -496,22 +549,6 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   background: var(--paper);
 }
 [data-plain="on"] .paper::after { display: none; }
-
-/* 夜里：屏幕往下沉进黑暗——灯照不到的地方，连字一起暗下去。
-   固定在视口上（不随滚动），所以永远是"屏幕下半部分"在变暗 */
-[data-theme="dark"] .paper::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 2;              /* 压在正文之上，字会跟着变暗 */
-  pointer-events: none;
-  background: linear-gradient(180deg,
-    rgba(0, 0, 0, 0) 38%,
-    rgba(0, 0, 0, 0.30) 62%,
-    rgba(0, 0, 0, 0.66) 84%,
-    rgba(0, 0, 0, 0.9) 100%);
-}
-[data-plain="on"] .paper::before { display: none; }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .paper {

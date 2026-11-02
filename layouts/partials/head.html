@@ -5,21 +5,30 @@
 <meta name="darkreader-lock">
 <meta name="theme-color" content="#E7E1D6">
 <script>
-  /* 首屏前定调：避免昼夜/素纸切换时的闪白 */
+  /* 首屏前定调：避免昼夜/素纸/护眼切换时的闪白 */
   (function () {
-    var r = document.documentElement, t = null, p = null;
-    try { t = localStorage.getItem('epistle.theme'); p = localStorage.getItem('epistle.plain'); } catch (e) {}
+    var r = document.documentElement, t = null, p = null, c = null;
+    try {
+      t = localStorage.getItem('epistle.theme');
+      p = localStorage.getItem('epistle.plain');
+      c = localStorage.getItem('epistle.care');
+    } catch (e) {}
     var q = location.search || '';
     var qt = q.match(/[?&]theme=(light|dark)/);
     if (qt) { t = qt[1]; p = null; }
     if (/[?&]plain=1/.test(q)) p = 'on';
+    if (/[?&]care=1/.test(q)) c = 'on';
     var dark = t === 'dark' || (t !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     r.dataset.theme = dark ? 'dark' : 'light';
     if (p === 'on') r.dataset.plain = 'on';
+    if (c === 'on') r.dataset.care = 'on';
     r.dataset.js = 'on';
     /* 手机浏览器地址栏跟着桌面颜色走，别让夜里顶着一条白边 */
     var m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute('content', dark ? '#080706' : '#E7E1D6');
+    if (m) {
+      var care = c === 'on';
+      m.setAttribute('content', care ? (dark ? '#1C1712' : '#EDE4D3') : (dark ? '#080706' : '#E7E1D6'));
+    }
   })();
 </script>
 <title>{{ .Site.Title }}</title>

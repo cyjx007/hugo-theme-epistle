@@ -570,12 +570,18 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
 
   var themeBtn = document.querySelector('[data-tool="theme"]');
   var plainBtn = document.querySelector('[data-tool="plain"]');
+  var careBtn = document.querySelector('[data-tool="care"]');
   var printBtn = document.querySelector('[data-tool="print"]');
 
   function syncTools() {
     var dark = root.dataset.theme === 'dark';
+    var care = root.dataset.care === 'on';
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#080706' : '#E7E1D6');
+    if (meta) {
+      meta.setAttribute('content', care
+        ? (dark ? '#1C1712' : '#EDE4D3')
+        : (dark ? '#080706' : '#E7E1D6'));
+    }
     if (themeBtn) {
       themeBtn.setAttribute('aria-pressed', dark ? 'true' : 'false');
       themeBtn.textContent = dark ? '日读' : '夜读';
@@ -583,6 +589,10 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
     }
     if (plainBtn) {
       plainBtn.setAttribute('aria-pressed', root.dataset.plain === 'on' ? 'true' : 'false');
+    }
+    if (careBtn) {
+      careBtn.setAttribute('aria-pressed', care ? 'true' : 'false');
+      careBtn.setAttribute('title', care ? '护眼中：再点回到原来的纸色' : '护眼：压低亮度、去掉蓝光，日读夜读都适用');
     }
   }
 
@@ -605,6 +615,17 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
       syncTools();
       clearPaint();
       if (!on) repaint();
+    });
+  }
+
+  if (careBtn) {
+    careBtn.addEventListener('click', function () {
+      var on = root.dataset.care === 'on';
+      if (on) { root.removeAttribute('data-care'); set('epistle.care', null); }
+      else { root.dataset.care = 'on'; set('epistle.care', 'on'); }
+      syncTools();
+      clearPaint();
+      repaint();
     });
   }
 
