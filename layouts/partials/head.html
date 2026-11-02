@@ -24,8 +24,8 @@
 <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
 
 {{- /* 装到桌面：manifest 让安卓/桌面浏览器给「安装」，iOS 认 apple-* 那几行 */}}
-<link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
-<link rel="icon" href="{{ "favicon.ico" | relURL }}" sizes="32x32">
+<link rel="icon" href="{{ "favicon.svg" | relURL }}?v={{ now.Unix }}" type="image/svg+xml">
+<link rel="icon" href="{{ "favicon.ico" | relURL }}?v={{ now.Unix }}" sizes="32x32">
 <link rel="manifest" href="{{ "manifest.webmanifest" | relURL }}">
 <link rel="apple-touch-icon" href="{{ "icons/apple-touch-icon.png" | relURL }}">
 <meta name="apple-mobile-web-app-capable" content="yes">
