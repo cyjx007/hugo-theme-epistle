@@ -34,7 +34,7 @@
 <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} — {{ end }}{{ .Site.Title }}{{ end }}</title>
 {{- /* 每页一句自己的描述：有 description 用它，否则截一段正文，再不行才用站点描述 */ -}}
 {{- $desc := .Description -}}
-{{- if not $desc }}{{ with .Summary }}{{ $desc = . | plainify | replaceRE `\s+` " " | truncate 120 }}{{ end }}{{ end -}}
+{{- if not $desc }}{{ with .Summary }}{{ $desc = . | plainify | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace | truncate 120 }}{{ end }}{{ end -}}
 {{- if not $desc }}{{ $desc = .Site.Params.description }}{{ end -}}
 <meta name="description" content="{{ $desc }}">
 <link rel="canonical" href="{{ .Permalink }}">
