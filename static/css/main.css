@@ -1185,6 +1185,13 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   .index-tab { backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 
+/* 窄屏：字标收一号，别把「夜读/素纸/打印」挤到第二行 */
+@media (max-width: 640px) {
+  .site-title { gap: 0.5rem; }
+  .site-title__name { font-size: 1.45rem; }
+  .site-title__seal { width: 1.1rem; height: 1.1rem; font-size: 0.8rem; }
+}
+
 /* ── 11. 打印：一张真信纸 ───────────────────────────────── */
 @media print {
   @page {
