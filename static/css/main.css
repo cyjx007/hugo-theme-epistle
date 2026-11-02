@@ -502,50 +502,23 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   }
 }
 
-/* 折痕：一封信叠三折。读到哪一折，哪一折的压痕就松开 */
+/* 折痕：每个小标题前压一道折线。读过去之后，压痕松开（淡掉） */
 .paper__fold {
   position: absolute;
   left: 0;
   right: 0;
-  height: 24px;
-  margin-top: -12px;
+  height: 2px;
   pointer-events: none;
   z-index: 0;
   --open: 0;
+  /* 1px 暗线 + 1px 反光：纸被折过就是上下两笔 */
+  background: linear-gradient(180deg, var(--fold-dark) 0 1px, var(--fold-light) 1px 2px);
+  opacity: calc(1 - var(--open) * 0.9);
+  transition: opacity 0.9s var(--ease);
 }
-.paper__fold[data-fold="1"] { top: 33.333%; }
-.paper__fold[data-fold="2"] { top: 66.666%; }
+.paper__fold.is-open { --open: 1; }
 
-.paper__fold::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg,
-    rgba(0, 0, 0, 0) 0%,
-    var(--fold-dark) 30%,
-    var(--fold-dark) 44%,
-    var(--fold-light) 56%,
-    rgba(0, 0, 0, 0) 100%);
-  opacity: calc(1 - var(--open) * 0.78);
-  transition: opacity 0.6s var(--ease);
-}
-
-.paper__fold::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 11px;
-  height: 1px;
-  background: var(--fold-dark);
-  opacity: 0.85;
-  transition: opacity 0.6s var(--ease);
-}
-
-.paper__fold.is-open::after { opacity: 0.45; }
-
-[data-plain="on"] .paper__fold::before { display: none; }
-[data-plain="on"] .paper__fold::after { opacity: 0.5; }
+[data-plain="on"] .paper__fold { display: none; }
 
 /* ── 5. 信件版式 ─────────────────────────────────────────── */
 .letter {

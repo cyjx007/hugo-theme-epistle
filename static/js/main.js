@@ -627,9 +627,31 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
   body.dataset.scene = sceneFor(root.dataset.theme === 'dark');
   repaint();
 
-  // ── 折痕：读到哪一折，哪一折就松开 ──
-  var folds = Array.prototype.slice.call(document.querySelectorAll('.paper__fold'));
+  // ── 折痕：每个小标题前压一道折线，读过去就松开 ──
+  // 位置由标题决定（跟着正文走），不再是整张纸的 33%/66%
+  var paperEl = document.querySelector('.paper');
+  var bodyEl = document.querySelector('.letter-body');
+  var folds = [];
   var ticking = false;
+
+  function buildFolds() {
+    if (!paperEl || !bodyEl) return;
+    folds.forEach(function (f) { f.remove(); });
+    folds = [];
+    var heads = bodyEl.querySelectorAll('h2');
+    if (!heads.length) return;
+    var paperTop = paperEl.getBoundingClientRect().top + window.scrollY;
+    for (var i = 0; i < heads.length; i++) {
+      var y = heads[i].getBoundingClientRect().top + window.scrollY - paperTop;
+      var f = document.createElement('div');
+      f.className = 'paper__fold';
+      f.setAttribute('aria-hidden', 'true');
+      f.style.top = Math.max(0, Math.round(y - 14)) + 'px';
+      paperEl.appendChild(f);
+      folds.push(f);
+    }
+    markFolds();
+  }
 
   function markFolds() {
     ticking = false;
@@ -647,11 +669,13 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
     window.requestAnimationFrame(markFolds);
   }
 
-  if (folds.length) {
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    markFolds();
-  }
+  buildFolds();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () {
+    buildFolds();
+    onScroll();
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildFolds);
 })();
 
 // ── 装到桌面：注册 service worker（http 或太老的浏览器就直接跳过）──

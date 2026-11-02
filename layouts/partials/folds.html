@@ -1,6 +1,0 @@
-{{- /* 折痕：只有够长的信才叠三折 */ -}}
-{{- $long := 600 -}}
-{{- if gt .WordCount $long -}}
-<div class="paper__fold" data-fold="1" aria-hidden="true"></div>
-<div class="paper__fold" data-fold="2" aria-hidden="true"></div>
-{{- end -}}
