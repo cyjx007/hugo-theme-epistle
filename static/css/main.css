@@ -242,7 +242,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   background:
     radial-gradient(42rem 28rem at 82% 4%, rgba(255, 246, 231, 0.7) 0%, transparent 56%),
     radial-gradient(30rem 24rem at 58% 18%, rgba(255, 255, 255, 0.24) 0%, transparent 58%);
-  filter: blur(38px);
+  /* 不再 blur(38px)：径向渐变本来就是软的，全屏高斯只是白烧一次大图 */
 }
 
 [data-theme="dark"] .dappled-layer__wash {
@@ -256,6 +256,9 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   inset: -8%;
   opacity: calc(var(--dappled-enabled) * var(--dappled-shadow-opacity, 1));
   animation: dappledDrift 36s ease-in-out infinite alternate;
+  /* 提到独立合成层：整层平移交给合成器，别每帧重画画布 */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .dappled-svg {
@@ -300,10 +303,12 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 .dappled-layer__bokeh {
   position: absolute;
   inset: -8%;
-  filter: blur(var(--dappled-bokeh-blur, 18px));
-  mix-blend-mode: screen;
+  /* 光斑本身就是 radial-gradient，blur() 只是把已经软的圆再糊一遍；
+     screen 混合还会逼合成器每帧读整屏背景——两样都去掉，观感几乎一样 */
   opacity: calc(var(--dappled-enabled) * var(--dappled-bokeh-opacity, 0.7));
   animation: dappledDrift 30s ease-in-out -8s infinite alternate;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .dappled-bokeh {
@@ -319,8 +324,16 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   background-position: 0 0, 9px 12px;
   background-size: 18px 18px, 23px 23px;
   opacity: calc(var(--dappled-enabled) * var(--dappled-grain-opacity, 0.1));
-  mix-blend-mode: soft-light;
+  /* 原来这里是 soft-light：一层全屏混合，等于每帧重读整屏。低透明度下几乎看不出差别 */
 }
+
+/* 减少动效 / 标签页在后台：停掉整层漂移，别在看不见的时候还烧 GPU */
+@media (prefers-reduced-motion: reduce) {
+  .dappled-layer__shadows,
+  .dappled-layer__bokeh { animation: none; }
+}
+body.is-tab-hidden .dappled-layer__shadows,
+body.is-tab-hidden .dappled-layer__bokeh { animation-play-state: paused; }
 
 /* 台灯：一圈亮，四周真的暗下去。不是全黑底，是光锥之外 */
 .lamp {
@@ -491,12 +504,12 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   padding: var(--pad-paper);
   background:
     linear-gradient(180deg,
-      color-mix(in srgb, var(--paper) 96%, transparent) 0%,
-      color-mix(in srgb, var(--paper) calc(var(--paper-alpha) * 100%), transparent) 42%,
-      color-mix(in srgb, var(--paper) 89%, transparent) 100%);
+      color-mix(in srgb, var(--paper) 97%, transparent) 0%,
+      color-mix(in srgb, var(--paper) calc((var(--paper-alpha) + 0.02) * 100%), transparent) 42%,
+      color-mix(in srgb, var(--paper) 93%, transparent) 100%);
   box-shadow: var(--shadow-paper);
-  backdrop-filter: blur(14px) saturate(112%) brightness(1.01);
-  -webkit-backdrop-filter: blur(14px) saturate(112%) brightness(1.01);
+  /* 原来这里是 backdrop-filter: blur(14px)：纸本身已经 93% 不透明，看不清那点模糊，
+     却要让合成器每一帧把下面还在漂移的叶影重新糊一遍——去掉，背景透明度补回来一点 */
   min-height: calc(100vh - 10rem);
   min-height: calc(100dvh - 10rem);
 }
@@ -1179,9 +1192,8 @@ body[data-dappled="off"] .dappled-layer { display: none; }
       radial-gradient(34rem 30rem at 50% 42%, rgba(0,0,0,0) 20%, rgba(0,0,0,.3) 60%, rgba(0,0,0,.8) 100%);
   }
 
-  /* 手机上省一层：feTurbulence 位移每帧都要重算，中低端机吃不消 */
+  /* 手机上再省一层：feTurbulence 位移在低端机上很贵，直接不做 */
   .dappled-svg { filter: none; }
-  .dappled-layer__bokeh { filter: blur(14px); }
   .index-tab { backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 

@@ -60,8 +60,14 @@ function paintDappled(style) {
   blurFilter('dw-soft', '1.5');   // 远焦：糊而有形（再重就成雾斑了）
   blurFilter('dw-cloud', '1.1');  // 云：轮廓可辨的软边
 
+  /* 整片「微风摆动」默认关掉：SVG 里只要有节点在动，整棵画布
+     （带 feTurbulence 位移 + 每个叶团的高斯模糊）就得每帧重算，核显直接打满。
+     见 reports/firefox-gpu-94-report.md。现在叶影是静止的一张图，
+     动感交给 CSS 的 dappledDrift —— 整层平移，合成器就能做。 */
+  var allowSway = false;
+
   function sway(gEl, ox, oy, name, dur) {
-    if (reducedMotion) return;
+    if (!allowSway || reducedMotion) return;
     gEl.style.transformBox = 'view-box';
     gEl.style.transformOrigin = ox.toFixed(0) + 'px ' + oy.toFixed(0) + 'px';
     gEl.style.animation = name + ' ' + dur.toFixed(1) + 's ease-in-out -' + (R() * dur).toFixed(1) + 's infinite';
@@ -658,3 +664,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
+
+// ── 切到后台就停下背景漂移，别在看不见的时候还占 GPU ──
+document.addEventListener('visibilitychange', () => {
+  document.body.classList.toggle('is-tab-hidden', document.hidden);
+});
