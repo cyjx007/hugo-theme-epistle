@@ -395,20 +395,22 @@ body.is-tab-hidden .dappled-layer__bokeh { animation-play-state: paused; }
   text-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 7%, transparent);
 }
 
-/* 朱印：一个白文小方印，压在字标后面 */
+/* 朱印：一枚小方章，压在字标后面。印文是英文名（params.seal，如 Tang） */
 .site-title__seal {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
+  height: 1.05rem;
+  padding: 0 0.3rem;
   border-radius: 2px;
   background: var(--seal);
   color: var(--paper);
-  font-family: var(--font-title);
-  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.56rem;
+  font-weight: 600;
   line-height: 1;
-  letter-spacing: 0;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
   transform: translateY(0.05rem) rotate(-3deg);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--paper) 32%, transparent);
 }
@@ -1201,7 +1203,7 @@ body.is-tab-hidden .dappled-layer__bokeh { animation-play-state: paused; }
 @media (max-width: 640px) {
   .site-title { gap: 0.5rem; }
   .site-title__name { font-size: 1.45rem; }
-  .site-title__seal { width: 1.1rem; height: 1.1rem; font-size: 0.8rem; }
+  .site-title__seal { height: 0.95rem; padding: 0 0.24rem; font-size: 0.5rem; }
 }
 
 /* ── 11. 打印：一张真信纸 ───────────────────────────────── */
