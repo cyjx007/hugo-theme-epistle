@@ -93,72 +93,12 @@
 /* 夜色：不是把背景刷黑，是把灯关掉一半 */
 [data-theme="dark"] {
   color-scheme: dark;
-  --seal: #C2553D;
-  --paper-fresh: #241E17;
-  --paper-aged: #2A2219;
-  --ink-fresh: #EFE7D6;
-  --ink-aged: #B9AC94;
-  --meta-fresh: #9A9382;
-  --meta-aged: #877F6F;
-  --accent-fresh: #E09B6E;
-  --accent-aged: #BE8A6A;
-  --diff-del: #E08A7A; /* 夜纸 6.35:1 */
-  --diff-add: #7FB08A; /* 夜纸 6.66:1 */
-
-  --desk: #080706;
-  --desk-glow: #14100D;
-
-  --paper-alpha: 0.96;
-  --fold-light: rgba(255, 255, 255, 0.07);
-  --fold-dark: rgba(0, 0, 0, 0.5);
-
-  --shadow-paper:
-    0 0 0 1px rgba(255, 240, 210, 0.055),
-    0 1px 1px rgba(0, 0, 0, 0.5),
-    0 30px 70px -24px rgba(0, 0, 0, 0.9);
-
-  --dappled-shadow-color: rgba(0, 4, 14, 0.5);
-  --dappled-shadow-opacity: 0.72;
-  --dappled-bokeh-color: rgba(186, 202, 235, 0.42);
-  --dappled-bokeh-blur: 22px;
-  --dappled-bokeh-opacity: 0.55;
-  --dappled-grain-opacity: 0.14;
-}
-
-/* ── 护眼：降亮度、去蓝光，日读夜读都适用 ───────────────────
-   纸更暖更暗一档（不刺眼），墨不是纯黑而是暖褐（少蓝光），
-   对比度仍在 9:1 以上，暗到能长时间看、又不至于糊。 */
-[data-care="on"] {
-  --paper-fresh: #EDE4D3;   /* 不是纯白，暖纸，亮度约 88% */
-  --paper-aged: #E3D5BA;
-  --ink-fresh: #3A342A;     /* 暖褐墨，无蓝光；暖纸上 9.9:1 */
-  --ink-aged: #574E41;
-  --meta-fresh: #6B6252;    /* 5.1:1 */
-  --meta-aged: #645B4B;
-  --accent-fresh: #8A4B36;
-  --accent-aged: #7C4736;
-  --diff-del: #8A3A2C;
-  --diff-add: #3C6A4C;
-
-  --desk: #D9CEBB;
-  --desk-glow: #E7DDCB;
-  --seal: #9A4231;
-
-  --paper-alpha: 0.97;
-  --fold-dark: rgba(70, 55, 30, 0.16);
-  --fold-light: rgba(255, 250, 240, 0.5);
-
-  --dappled-shadow-color: rgba(60, 48, 30, 0.5);
-  --dappled-shadow-opacity: 0.6;
-  --dappled-grain-opacity: 0.07;
-}
-
-[data-care="on"][data-theme="dark"] {
-  --paper-fresh: #1C1712;   /* 比普通夜读再暗一点，暖黑 */
+  --seal: #B5503A;
+  --paper-fresh: #1C1712;
   --paper-aged: #221C15;
-  --ink-fresh: #C9BEA9;     /* 压掉亮度，不刺眼；夜纸 9.7:1 */
+  --ink-fresh: #C9BEA9;
   --ink-aged: #A69B87;
-  --meta-fresh: #9C9280;    /* 5.8:1 */
+  --meta-fresh: #9C9280;
   --meta-aged: #8B8271;
   --accent-fresh: #D89A6E;
   --accent-aged: #B98A6B;
@@ -167,15 +107,76 @@
 
   --desk: #060504;
   --desk-glow: #100C09;
-  --seal: #B5503A;
 
   --paper-alpha: 0.98;
-  --fold-dark: rgba(0, 0, 0, 0.42);
   --fold-light: rgba(255, 240, 210, 0.07);
+  --fold-dark: rgba(0, 0, 0, 0.42);
+
+  --shadow-paper:
+    0 0 0 1px rgba(255, 240, 210, 0.055),
+    0 1px 1px rgba(0, 0, 0, 0.5),
+    0 30px 70px -24px rgba(0, 0, 0, 0.9);
 
   --dappled-shadow-color: rgba(0, 4, 14, 0.45);
   --dappled-shadow-opacity: 0.6;
+  --dappled-bokeh-color: rgba(186, 202, 235, 0.42);
+  --dappled-bokeh-blur: 22px;
+  --dappled-bokeh-opacity: 0.55;
   --dappled-grain-opacity: 0.1;
+}
+
+/* ── 护眼：降亮度、去蓝光，日读夜读都适用 ───────────────────
+   纸更暖更暗一档（不刺眼），墨不是纯黑而是暖褐（少蓝光），
+   对比度仍在 9:1 以上，暗到能长时间看、又不至于糊。 */
+[data-care="on"] {
+  --paper-fresh: #E8DDC8;   /* 比日读纸再暗一档，暖、无蓝光 */
+  --paper-aged: #DECFB2;
+  --ink-fresh: #383228;     /* 暖褐墨；纸上 9.4:1 */
+  --ink-aged: #544B3E;
+  --meta-fresh: #655C4D;    /* 5.0:1 */
+  --meta-aged: #5F5748;
+  --accent-fresh: #85462F;
+  --accent-aged: #784330;
+  --diff-del: #83382A;
+  --diff-add: #386547;
+
+  --desk: #D3C7B2;
+  --desk-glow: #E1D6C3;
+  --seal: #8F3D2D;
+
+  --paper-alpha: 0.98;
+  --fold-dark: rgba(70, 55, 30, 0.15);
+  --fold-light: rgba(255, 250, 240, 0.45);
+
+  --dappled-shadow-color: rgba(60, 48, 30, 0.5);
+  --dappled-shadow-opacity: 0.5;
+  --dappled-grain-opacity: 0.06;
+}
+
+/* 护眼 + 夜读：再压一档，纸更黑、墨更沉，长时间夜里看也不刺 */
+[data-care="on"][data-theme="dark"] {
+  --paper-fresh: #14100C;
+  --paper-aged: #191410;
+  --ink-fresh: #B6AA96;     /* 夜纸 8.4:1 */
+  --ink-aged: #9A8F7C;
+  --meta-fresh: #8E8574;    /* 5.2:1 */
+  --meta-aged: #7E7666;
+  --accent-fresh: #C98F66;
+  --accent-aged: #AC7C5C;
+  --diff-del: #C08070;
+  --diff-add: #74997E;
+
+  --desk: #040303;
+  --desk-glow: #0B0806;
+  --seal: #A84834;
+
+  --paper-alpha: 0.99;
+  --fold-dark: rgba(0, 0, 0, 0.4);
+  --fold-light: rgba(255, 240, 210, 0.06);
+
+  --dappled-shadow-color: rgba(0, 4, 14, 0.4);
+  --dappled-shadow-opacity: 0.5;
+  --dappled-grain-opacity: 0.08;
 }
 
 /* 插值：老信纸更黄、墨更淡、朱印更旧 */
