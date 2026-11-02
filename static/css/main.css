@@ -255,10 +255,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   position: absolute;
   inset: -8%;
   opacity: calc(var(--dappled-enabled) * var(--dappled-shadow-opacity, 1));
-  animation: dappledDrift 36s ease-in-out infinite alternate;
-  /* 提到独立合成层：整层平移交给合成器，别每帧重画画布 */
-  will-change: transform;
-  backface-visibility: hidden;
+  /* 不做动画：整层是静止的，浏览器光栅化一次就不再动它 */
 }
 
 .dappled-svg {
@@ -266,49 +263,19 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   inset: 0;
   width: 100%;
   height: 100%;
-  filter: url(#dw-wind);
+  /* 不挂 filter: url(#dw-wind)，也不做动画：
+     feTurbulence + 逐组高斯模糊只在第一次绘制时算一遍，之后就是一张静态图 */
 }
 
 @supports (-moz-appearance: none) {
   .dappled-svg { filter: none; }
 }
 
-@keyframes treeSway {
-  0%, 100% { transform: rotate(-0.55deg); }
-  52%      { transform: rotate(1.05deg); }
-  70%      { transform: rotate(0.3deg); }
-  85%      { transform: rotate(0.7deg); }
-}
-@keyframes branchSway {
-  0%, 100% { transform: rotate(-0.85deg); }
-  48%      { transform: rotate(1.35deg); }
-  66%      { transform: rotate(0.2deg); }
-  83%      { transform: rotate(0.8deg); }
-}
-@keyframes strandSway {
-  0%, 100% { transform: rotate(-1.0deg); }
-  45%      { transform: rotate(1.5deg); }
-  64%      { transform: rotate(0.25deg); }
-  82%      { transform: rotate(0.85deg); }
-}
-@keyframes cloudDrift {
-  from { transform: translate3d(-7px, 0, 0); }
-  to   { transform: translate3d(7px, 0, 0); }
-}
-@keyframes dappledDrift {
-  0%   { transform: translate3d(0, 0, 0) scale(1); }
-  100% { transform: translate3d(-1.8rem, 1.2rem, 0) scale(1.02); }
-}
-
 .dappled-layer__bokeh {
   position: absolute;
   inset: -8%;
-  /* 光斑本身就是 radial-gradient，blur() 只是把已经软的圆再糊一遍；
-     screen 混合还会逼合成器每帧读整屏背景——两样都去掉，观感几乎一样 */
+  /* 光斑本身就是 radial-gradient，不用 blur() 也不用 screen 混合 */
   opacity: calc(var(--dappled-enabled) * var(--dappled-bokeh-opacity, 0.7));
-  animation: dappledDrift 30s ease-in-out -8s infinite alternate;
-  will-change: transform;
-  backface-visibility: hidden;
 }
 
 .dappled-bokeh {
@@ -326,14 +293,6 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   opacity: calc(var(--dappled-enabled) * var(--dappled-grain-opacity, 0.1));
   /* 原来这里是 soft-light：一层全屏混合，等于每帧重读整屏。低透明度下几乎看不出差别 */
 }
-
-/* 减少动效 / 标签页在后台：停掉整层漂移，别在看不见的时候还烧 GPU */
-@media (prefers-reduced-motion: reduce) {
-  .dappled-layer__shadows,
-  .dappled-layer__bokeh { animation: none; }
-}
-body.is-tab-hidden .dappled-layer__shadows,
-body.is-tab-hidden .dappled-layer__bokeh { animation-play-state: paused; }
 
 /* 台灯：一圈亮，四周真的暗下去。不是全黑底，是光锥之外 */
 .lamp {
@@ -465,7 +424,7 @@ body.is-tab-hidden .dappled-layer__bokeh { animation-play-state: paused; }
   right: -2px;
   top: max(6rem, calc(env(safe-area-inset-top) + 5rem));
   z-index: 200;
-  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
   color: var(--meta);
   border: 1px solid var(--hairline);
   border-right: none;
@@ -478,8 +437,6 @@ body.is-tab-hidden .dappled-layer__bokeh { animation-play-state: paused; }
   cursor: pointer;
   appearance: none;
   box-shadow: -1px 1px 6px rgba(0, 0, 0, 0.06);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   transition: transform 0.35s var(--ease), color 0.2s, background 0.2s;
 }
 .index-tab:hover { color: var(--ink); background: color-mix(in srgb, var(--paper) 94%, transparent); }

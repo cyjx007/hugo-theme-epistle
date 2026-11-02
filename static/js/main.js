@@ -282,11 +282,7 @@ function paintDappled(style) {
         r: r.toFixed(1)
       }, g);
     }
-    if (!reducedMotion) {
-      g.style.transformBox = 'view-box';
-      var dur = rr(38, 70);
-      g.style.animation = 'cloudDrift ' + dur.toFixed(0) + 's ease-in-out -' + (R() * dur).toFixed(0) + 's infinite alternate';
-    }
+    /* 云也不再漂：整套叶影/云影是静态的（见 reports/firefox-gpu-94-report.md） */
     return g;
   }
 
