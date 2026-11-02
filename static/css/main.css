@@ -497,6 +497,22 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 }
 [data-plain="on"] .paper::after { display: none; }
 
+/* 夜里：屏幕往下沉进黑暗——灯照不到的地方，连字一起暗下去。
+   固定在视口上（不随滚动），所以永远是"屏幕下半部分"在变暗 */
+[data-theme="dark"] .paper::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2;              /* 压在正文之上，字会跟着变暗 */
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(0, 0, 0, 0) 38%,
+    rgba(0, 0, 0, 0.30) 62%,
+    rgba(0, 0, 0, 0.66) 84%,
+    rgba(0, 0, 0, 0.9) 100%);
+}
+[data-plain="on"] .paper::before { display: none; }
+
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .paper {
     background: color-mix(in srgb, var(--paper) 94%, transparent);
