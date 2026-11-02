@@ -23,6 +23,13 @@
 <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
 <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
 
+{{- /* 装到桌面：manifest 让安卓/桌面浏览器给「安装」，iOS 认 apple-* 那几行 */}}
+<link rel="manifest" href="{{ "manifest.webmanifest" | relURL }}">
+<link rel="apple-touch-icon" href="{{ "icons/apple-touch-icon.png" | relURL }}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="{{ .Site.Title }}">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
 <link rel="alternate" type="application/rss+xml" href="{{ "index.xml" | absURL }}" title="{{ .Site.Title }}">
 
 {{- $ogTitle := cond .IsHome .Site.Title (printf "%s — %s" .Title .Site.Title) }}

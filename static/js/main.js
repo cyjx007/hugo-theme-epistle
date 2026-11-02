@@ -480,12 +480,35 @@ const toggle = document.getElementById('sidebar-toggle');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebar-overlay');
 
+/* 锁背景滚动：iOS Safari 不认 body{overflow:hidden}，得把 body 钉住再把 scrollY 记回来 */
+var lockedScrollY = 0;
+
+function lockBodyScroll() {
+  lockedScrollY = window.scrollY || window.pageYOffset || 0;
+  document.body.style.position = 'fixed';
+  document.body.style.top = (-lockedScrollY) + 'px';
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.width = '100%';
+  document.body.style.overflow = 'hidden';
+}
+
+function unlockBodyScroll() {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.width = '';
+  document.body.style.overflow = '';
+  window.scrollTo(0, lockedScrollY);
+}
+
 function openSidebar() {
   sidebar.classList.add('is-open');
   overlay.classList.add('is-visible');
   toggle.classList.add('is-active');
   toggle.setAttribute('aria-expanded', 'true');
-  document.body.style.overflow = 'hidden';
+  lockBodyScroll();
 }
 
 function closeSidebar() {
@@ -493,7 +516,7 @@ function closeSidebar() {
   overlay.classList.remove('is-visible');
   toggle.classList.remove('is-active');
   toggle.setAttribute('aria-expanded', 'false');
-  document.body.style.overflow = '';
+  unlockBodyScroll();
 }
 
 if (toggle && sidebar && overlay) {
@@ -628,3 +651,10 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
     markFolds();
   }
 })();
+
+// ── 装到桌面：注册 service worker（http 或太老的浏览器就直接跳过）──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}

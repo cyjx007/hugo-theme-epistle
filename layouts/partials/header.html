@@ -1,6 +1,7 @@
 <header class="site-header">
   <a class="site-title" href="{{ "/" | relURL }}">
     <span class="site-title__name">{{ .Site.Title }}</span>
+    {{- with .Site.Params.seal }}<span class="site-title__seal" aria-hidden="true">{{ . }}</span>{{ end }}
     {{- with .Site.Params.tagline }}<span class="site-title__tag">{{ . }}</span>{{ end }}
   </a>
   <div class="tools" role="group" aria-label="阅读设置">

@@ -16,6 +16,17 @@
    12 无障碍：减动效 / 高对比 / 焦点
    ============================================================ */
 
+/* 「纸短情长」字标用的毛笔字：马善政毛笔楷书（SIL OFL），只子集了这四个字（3 KB）。
+   unicode-range 保证别的字永远不会触发这个字体下载。 */
+@font-face {
+  font-family: "Epistle Brush";
+  src: url("../fonts/zhiduan-qingchang.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+7EB8, U+77ED, U+60C5, U+957F;
+}
+
 /* ── 0. 令牌 ────────────────────────────────────────────────
    纸色与墨色不是一个开关，是一条随年份滑动的尺：
    --age: 0（今天写的）→ 1（六年以上的旧信）。
@@ -36,6 +47,8 @@
   /* 朱墨（链接、印记） */
   --accent-fresh: #9A3B2A;
   --accent-aged: #8E4B33;
+  /* 印章：比正文的朱墨更实一点，两种纸色上都够显 */
+  --seal: #A6392A;
   /* diff 高亮（夜间要单独给亮色） */
   --diff-del: #8A2B1C;
   --diff-add: #2C6A46;
@@ -80,6 +93,7 @@
 /* 夜色：不是把背景刷黑，是把灯关掉一半 */
 [data-theme="dark"] {
   color-scheme: dark;
+  --seal: #C2553D;
   --paper-fresh: #241E17;
   --paper-aged: #2A2219;
   --ink-fresh: #EFE7D6;
@@ -151,6 +165,9 @@ body {
   --hairline: rgba(214, 204, 186, 0.28);
   --shadow-paper: 0 0 0 1px rgba(0, 0, 0, 0.55);
 }
+/* 素纸模式：字标也回到正文字体，印章收起——去掉一切装饰 */
+[data-plain="on"] .site-title__name { font-family: var(--font-title); font-size: 1.15rem; letter-spacing: 0.14em; }
+[data-plain="on"] .site-title__seal { display: none; }
 
 /* ── 1. 基础 ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
@@ -351,16 +368,36 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 
 .site-title {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.7rem;
   text-decoration: none;
   color: var(--ink);
 }
 
 .site-title__name {
-  font-size: 0.98rem;
-  letter-spacing: 0.16em;
-  font-weight: 600;
+  font-family: "Epistle Brush", var(--font-title);
+  font-size: 1.72rem;
+  line-height: 1.05;
+  letter-spacing: 0.1em;
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 7%, transparent);
+}
+
+/* 朱印：一个白文小方印，压在字标后面 */
+.site-title__seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 2px;
+  background: var(--seal);
+  color: var(--paper);
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  line-height: 1;
+  letter-spacing: 0;
+  transform: translateY(0.05rem) rotate(-3deg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--paper) 32%, transparent);
 }
 
 .site-title__tag {
