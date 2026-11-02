@@ -1132,13 +1132,13 @@ body[data-dappled="off"] .dappled-layer { display: none; }
     margin: 20mm 18mm 22mm;
   }
 
-  :root { --size-body: 11pt; }
+  :root { --size-body: 14px; }
 
   html, body {
     background: #fff !important;
     color: #000 !important;
-    font-size: 11pt;
-    line-height: 1.75;
+    font-size: 14px;
+    line-height: 1.7;
   }
 
   .dappled-layer,
@@ -1157,6 +1157,9 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   .site-header { display: none !important; }
 
   .desk, .layout { display: block; max-width: none; padding: 0; margin: 0; }
+
+  /* 100vh 在分页时会撑出一整页，末尾多一张空白 */
+  body, .desk, .layout, .paper { min-height: 0 !important; }
 
   .paper {
     box-shadow: none !important;
@@ -1177,7 +1180,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
     margin-bottom: 12mm;
     padding-bottom: 3mm;
     border-bottom: 0.4pt solid #000;
-    font-size: 8.5pt;
+    font-size: 11px;
     letter-spacing: 0.2em;
     color: #000;
   }
@@ -1190,7 +1193,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   .letter-header .letter-kicker { text-align: left; }
   .letter .letter-title {
     font-family: var(--font-title);
-    font-size: 20pt;
+    font-size: 27px;
     color: #000;
   }
   .letter-header__rule { display: none; }
@@ -1214,7 +1217,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
     background: #fff !important;
     border: 0.4pt solid #999;
     color: #000 !important;
-    font-size: 8.5pt;
+    font-size: 11px;
     white-space: pre-wrap;
     word-break: break-word;
     break-inside: avoid;
@@ -1234,7 +1237,7 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   /* 打印时给出链接地址，纸面上看不到的才需要 */
   .letter-body a[href^="http"]::after {
     content: " (" attr(href) ")";
-    font-size: 8pt;
+    font-size: 10.5px;
     color: #555;
     word-break: break-all;
   }
