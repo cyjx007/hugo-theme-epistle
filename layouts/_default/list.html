@@ -1,7 +1,10 @@
 {{ define "main" }}
 {{- if .IsHome -}}
   {{- $pages := where .Site.RegularPages "Section" "posts" -}}
-  {{- with index $pages.ByDate.Reverse 0 -}}
+  {{- $pinned := where $pages "Params.pin" true -}}
+  {{- $pick := index $pages.ByDate.Reverse 0 -}}
+  {{- if $pinned -}}{{- $pick = index $pinned.ByDate.Reverse 0 -}}{{- end -}}
+  {{- with $pick -}}
     {{- partial "letter.html" . -}}
     {{- $rest := sub (len $pages) 1 -}}
     {{- if gt $rest 0 -}}
