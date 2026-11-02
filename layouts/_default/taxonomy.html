@@ -1,0 +1,27 @@
+{{ define "main" }}
+{{- $pages := .Pages -}}
+<section class="archive-page">
+  <header class="archive-page__head">
+    <p class="archive-page__sub">{{ if eq .Data.Plural "tags" }}标签{{ else }}分类{{ end }}</p>
+    <h1 class="archive-page__title">{{ .Title }}</h1>
+    <p class="archive-page__sub">共 {{ len $pages }} 封</p>
+  </header>
+  {{ range $pages.ByDate.Reverse.GroupByDate "2006" }}
+  <div class="year-block">
+    <h2 class="year-block__year">{{ .Key }}</h2>
+    <ul class="letter-list">
+      {{ range .Pages }}
+      <li class="letter-list__item">
+        <a href="{{ .RelPermalink }}">
+          <time class="letter-list__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01-02" }}</time>
+          <span class="letter-list__title">{{ .Title }}</span>
+          <span class="letter-list__leader" aria-hidden="true"></span>
+          <span class="letter-list__meta">{{ .WordCount }} 字</span>
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </div>
+  {{ end }}
+</section>
+{{ end }}

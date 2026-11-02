@@ -1,0 +1,18 @@
+{{ define "main" }}
+{{- $label := .Title -}}
+{{- if eq .Data.Plural "tags" }}{{ $label = "标签" }}{{ end -}}
+{{- if eq .Data.Plural "categories" }}{{ $label = "分类" }}{{ end -}}
+<section class="archive-page">
+  <header class="archive-page__head">
+    <h1 class="archive-page__title">{{ $label }}</h1>
+    <p class="archive-page__sub">{{ len .Data.Terms }} 项</p>
+  </header>
+  <ul class="tag-cloud">
+    {{ range .Data.Terms.Alphabetical }}
+    <li>
+      <a href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }}<span class="count">{{ .Count }}</span></a>
+    </li>
+    {{ end }}
+  </ul>
+</section>
+{{ end }}

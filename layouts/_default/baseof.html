@@ -1,25 +1,23 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.LanguageCode | default "zh-CN" }}">
+<html lang="{{ .Site.LanguageCode | default "zh-CN" }}" data-theme="light">
 <head>
   {{- partial "head.html" . -}}
 </head>
-{{- $style := .Params.letter_style | default (.Site.Params.letterStyle | default "default") -}}
-{{- if .IsHome -}}
-  {{- with first 1 (where .Site.RegularPages "Section" "posts") -}}
-    {{- $style = (index . 0).Params.letter_style | default $style -}}
-  {{- end -}}
-{{- end -}}
+{{- $age := partial "age.html" . -}}
 {{- $dappledEnabled := true -}}
 {{- if isset .Site.Params "dappledlight" -}}
   {{- $dappledEnabled = .Site.Params.dappledLight -}}
 {{- end -}}
-<body data-style="{{ $style }}" data-dappled="{{ if $dappledEnabled }}on{{ else }}off{{ end }}"{{ if eq .Section "guestbook" }} class="page-guestbook"{{ end }}>
+<body class="{{ if eq .Section "guestbook" }}page-guestbook{{ end }}" style="--age: {{ $age }}" data-dappled="{{ if $dappledEnabled }}on{{ else }}off{{ end }}" data-scene="foliage">
+  <a class="skip-link" href="#top">跳到正文</a>
   <div class="dappled-layer" aria-hidden="true">
     <div class="dappled-layer__wash"></div>
     <div class="dappled-layer__shadows" id="dappled-shadows"></div>
     <div class="dappled-layer__bokeh" id="dappled-bokeh"></div>
     <div class="dappled-layer__grain"></div>
   </div>
+  <div class="lamp" aria-hidden="true"><span class="lamp__pool"></span></div>
+
   <div class="desk">
     {{- partial "header.html" . -}}
     <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
@@ -33,12 +31,10 @@
     </div>
     {{- partial "footer.html" . -}}
   </div>
-  <script src="//unpkg.com/heti/umd/heti-addon.min.js"></script>
+  <script src="{{ "vendor/heti/heti-addon.min.js" | relURL }}"></script>
   <script>
-    const heti = new Heti('.heti');
-    heti.autoSpacing();
+    if (window.Heti) { new Heti('.heti').autoSpacing(); }
   </script>
-  {{- $assetVersion := now.Unix -}}
-  <script src="{{ "js/main.js" | relURL }}?v={{ $assetVersion }}"></script>
+  <script src="{{ "js/main.js" | relURL }}?v={{ now.Unix }}"></script>
 </body>
 </html>

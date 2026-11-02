@@ -1,0 +1,71 @@
+{{- /* 一封信：标题、称谓、正文、落款。首页与单页共用 */ -}}
+{{- $p := . -}}
+{{- $hetiClass := partial "heti-class.html" (dict "heti_font" $p.Params.heti_font "heti_mode" $p.Params.heti_mode) -}}
+{{- $isPost := eq $p.Section "posts" -}}
+{{- $n := 0 -}}
+{{- if $isPost -}}
+  {{- $all := where $p.Site.RegularPages "Section" "posts" -}}
+  {{- range $i, $q := $all.ByDate -}}
+    {{- if eq $q.RelPermalink $p.RelPermalink -}}{{- $n = add $i 1 -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+<article class="letter {{ $hetiClass }}" id="top">
+  <div class="print-head" aria-hidden="true">
+    <div class="print-head__row">
+      <span class="print-head__brand">{{ $p.Site.Title }}{{ with $p.Site.Params.tagline }} · {{ . }}{{ end }}</span>
+      <span class="print-head__date">{{ $p.Date.Format "2006 年 1 月 2 日" }}</span>
+    </div>
+  </div>
+
+  <header class="letter-header">
+    {{- if gt $n 0 }}<p class="letter-kicker">第 {{ $n }} 封</p>{{ end }}
+    <h1 class="letter-title">{{ $p.Title }}</h1>
+    <span class="letter-header__rule" aria-hidden="true"></span>
+  </header>
+
+  {{ with $p.Params.salutation }}
+  <p class="salutation">{{ . }}</p>
+  {{ end }}
+
+  <div class="letter-body">
+    {{ $p.Content }}
+  </div>
+
+  <footer class="letter-footer">
+    <p class="valediction">{{ $p.Site.Params.valediction | default "此致" }}</p>
+    {{- if ne $p.Site.Params.showSignature false }}
+    {{ partial "signature.html" $p }}
+    {{- end }}
+    <time class="letter-date" datetime="{{ $p.Date.Format "2006-01-02" }}">
+      {{ $p.Date.Format "2006年1月2日" }}
+    </time>
+    {{- with $p.Params.postscript }}
+    <p class="postscript"><abbr title="Post Scriptum">P.S.</abbr> {{ . }}</p>
+    {{- end }}
+  </footer>
+
+  {{- with $p.GetTerms "tags" }}
+  <p class="letter-tags">
+    {{- range $i, $t := . }}{{ if $i }}<span aria-hidden="true">·</span>{{ end }}<a href="{{ $t.RelPermalink }}" rel="tag">{{ $t.LinkTitle }}</a>{{ end }}
+  </p>
+  {{- end }}
+
+  {{- if $p.IsPage }}
+  {{ partial "correspondence.html" $p }}
+
+  <nav class="letter-nav" aria-label="信件导航">
+    {{ with $p.PrevInSection }}
+    <a href="{{ .Permalink }}" class="letter-nav__link letter-nav__link--prev" rel="prev">
+      <span class="letter-nav__label">上一封</span>
+      <span class="letter-nav__title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+    {{ with $p.NextInSection }}
+    <a href="{{ .Permalink }}" class="letter-nav__link letter-nav__link--next" rel="next">
+      <span class="letter-nav__label">下一封</span>
+      <span class="letter-nav__title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+  </nav>
+  {{- end }}
+</article>

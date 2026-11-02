@@ -1,8 +1,15 @@
 <header class="site-header">
-  <a class="site-title" href="{{ "/" | relURL }}">{{ .Site.Title }}</a>
+  <a class="site-title" href="{{ "/" | relURL }}">
+    <span class="site-title__name">{{ .Site.Title }}</span>
+    {{- with .Site.Params.tagline }}<span class="site-title__tag">{{ . }}</span>{{ end }}
+  </a>
+  <div class="tools" role="group" aria-label="阅读设置">
+    <button class="tool" type="button" data-tool="theme" aria-pressed="false" title="夜里读信：台灯下的一小圈">夜读</button>
+    <button class="tool" type="button" data-tool="plain" aria-pressed="false" title="素纸模式：关掉纸纹、树影与楷体">素纸</button>
+    <button class="tool" type="button" data-tool="print" title="打印 / 导出 PDF">打印</button>
+  </div>
 </header>
 
-<!-- 信笺索引标签 -->
-<button class="index-tab" id="sidebar-toggle" aria-label="打开归档" aria-expanded="false" aria-controls="sidebar">
+<button class="index-tab" id="sidebar-toggle" aria-label="打开信匣" aria-expanded="false" aria-controls="sidebar">
   <span class="index-tab__text">信匣</span>
 </button>

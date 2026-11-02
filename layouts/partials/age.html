@@ -1,0 +1,11 @@
+{{- /* 信纸年龄：0 = 刚写完，1 = 最旧。按写信日期自动推算，无需手选皮肤。 */ -}}
+{{- $p := . -}}
+{{- $span := float ($p.Site.Params.ageSpanYears | default 6) -}}
+{{- $curve := float ($p.Site.Params.ageCurve | default 0.45) -}}
+{{- $days := div (sub now.Unix $p.Date.Unix) 86400 -}}
+{{- $t := 0.0 -}}
+{{- if gt $days 0 -}}
+  {{- $t = math.Min 1.0 (div (float $days) (mul $span 365.0)) -}}
+{{- end -}}
+{{- $age := math.Pow $t $curve -}}
+{{- return printf "%.3f" $age -}}

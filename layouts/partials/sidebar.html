@@ -1,4 +1,4 @@
-<nav class="archive" id="sidebar">
+<nav class="archive" id="sidebar" aria-label="信件归档">
   <h2 class="archive-title">往来书信</h2>
   {{- $mainSections := .Site.Params.mainSections | default (slice "posts") -}}
   {{- $pages := where .Site.RegularPages "Section" "in" $mainSections -}}
@@ -8,9 +8,9 @@
       {{ .Key }}
     </button>
     <div class="month-list"{{ if ne .Key (now.Format "2006") }} hidden{{ end }}>
-      {{ range .Pages.GroupByDate "January 2006" }}
+      {{ range .Pages.GroupByDate "2006-01" }}
       <div class="month-group">
-        <span class="month-label">{{ .Key | printf "%.3s" }}</span>
+        <span class="month-label">{{ substr .Key 5 2 }}月</span>
         <ul>
           {{ range .Pages }}
           <li>
@@ -26,4 +26,10 @@
     </div>
   </div>
   {{ end }}
+
+  <div class="archive-foot">
+    <a href="{{ "/posts/" | relURL }}">全部信件</a>
+    {{ range .Site.Menus.main }}<a href="{{ .URL | relURL }}">{{ .Name }}</a>{{ end }}
+    <a href="{{ "index.xml" | relURL }}">RSS</a>
+  </div>
 </nav>

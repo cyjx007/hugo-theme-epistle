@@ -1,50 +1,43 @@
 {{ define "main" }}
-{{ $pages := where .Site.RegularPages "Section" "posts" }}
-{{ $latest := index $pages 0 }}
-{{ with $latest }}
-{{- $hetiClass := partial "heti-class.html" (dict "heti_font" .Params.heti_font "heti_mode" .Params.heti_mode) -}}
-<article class="letter letter--preview {{ $hetiClass }}" id="top">
-  <header class="letter-header">
-    <h1 class="letter-title">{{ .Title }}</h1>
+{{- if .IsHome -}}
+  {{- $pages := where .Site.RegularPages "Section" "posts" -}}
+  {{- with index $pages.ByDate.Reverse 0 -}}
+    {{- partial "folds.html" . -}}
+    {{- partial "letter.html" . -}}
+    {{- $rest := sub (len $pages) 1 -}}
+    {{- if gt $rest 0 -}}
+    <div class="home-more">
+      <span>匣中还压着 {{ $rest }} 封旧信</span>
+      <a href="{{ "/posts/" | relURL }}">打开信匣 →</a>
+    </div>
+    {{- end -}}
+  {{- end -}}
+{{- else -}}
+  {{- $pages := .Pages -}}
+  {{- $title := .Title -}}
+  {{- if eq .Kind "section" }}{{ $title = (.Title | default "信匣") }}{{ end -}}
+<section class="archive-page">
+  <header class="archive-page__head">
+    <h1 class="archive-page__title">{{ $title }}</h1>
+    <p class="archive-page__sub">共 {{ len $pages }} 封</p>
   </header>
-
-  {{ with .Params.salutation }}
-  <p class="salutation">{{ . }}</p>
-  {{ end }}
-
-  <div class="letter-body">
-    {{ .Content }}
+  {{ range $pages.ByDate.Reverse.GroupByDate "2006" }}
+  <div class="year-block">
+    <h2 class="year-block__year">{{ .Key }}</h2>
+    <ul class="letter-list">
+      {{ range .Pages }}
+      <li class="letter-list__item">
+        <a href="{{ .RelPermalink }}">
+          <time class="letter-list__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01-02" }}</time>
+          <span class="letter-list__title">{{ .Title }}</span>
+          <span class="letter-list__leader" aria-hidden="true"></span>
+          <span class="letter-list__meta">{{ .WordCount }} 字</span>
+        </a>
+      </li>
+      {{ end }}
+    </ul>
   </div>
-
-  <footer class="letter-footer">
-    <div class="valediction">
-      {{- with .Site.Params.valediction }}{{ . }}{{ else }}此致{{ end }}
-    </div>
-    <div class="signature">
-      {{- with .Site.Params.signatureImage }}
-        <img src="{{ . }}" alt="{{ $.Site.Params.author }}" class="signature-image">
-      {{- else }}
-        <span class="signature-text">{{ $.Site.Params.author }}</span>
-      {{- end }}
-    </div>
-    <time class="letter-date letter-date--footer" datetime="{{ .Date.Format "2006-01-02" }}">
-      {{ .Date.Format "2006年1月2日" }}
-    </time>
-    {{- with .Params.postscript }}
-    <p class="postscript"><abbr title="Post Scriptum">P.S.</abbr> {{ . }}</p>
-    {{- end }}
-  </footer>
-
-  {{ partial "correspondence.html" . }}
-
-  <nav class="letter-nav" aria-label="信件导航">
-    {{ with index $pages 1 }}
-    <a href="{{ .Permalink }}" class="letter-nav__link letter-nav__link--next">
-      <span class="letter-nav__label">下一封</span>
-      <span class="letter-nav__title">{{ .Title }}</span>
-    </a>
-    {{ end }}
-  </nav>
-</article>
-{{ end }}
+  {{ end }}
+</section>
+{{- end -}}
 {{ end }}

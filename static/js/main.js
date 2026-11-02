@@ -6,11 +6,13 @@
 //   4. 风 = 整体慢摇 + 叶枝独立摆动（阵风节奏），噪声位移仅做静态的形状有机化
 // 五个主题各有场景：
 //   default 叶影浮动 / warm 夕照叶影 / sky 云影悠悠 / night 月下梅影 / spring 春柳拂风
-(function () {
+function paintDappled(style) {
   if (document.body.dataset.dappled === 'off') return;
   var sL = document.getElementById('dappled-shadows');
   var bL = document.getElementById('dappled-bokeh');
   if (!sL || !bL) return;
+  sL.textContent = '';
+  bL.textContent = '';
 
   var seed = 42;
   function R() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
@@ -443,23 +445,22 @@
   }
 
   // ── Dispatch ──
-  var style = document.body.dataset.style || 'default';
   var P = {
-    'default': { op1: 0.42, op2: 0.3, ghostOp: 0.2, glow: false, spotOp: [0, 0] },
-    warm:      { op1: 0.46, op2: 0.34, ghostOp: 0.24, glow: true, spotOp: [0.35, 0.5] },
-    sky:       { op1: 0.5, op2: 0.32, ghostOp: 0.17, glow: false, spotOp: [0, 0] },
-    night:     { op1: 0.7, op2: 0.45, ghostOp: 0.16, glow: true, spotOp: [0.3, 0.5] },
-    spring:    { op1: 0.44, op2: 0.32, ghostOp: 0.18, glow: true, spotOp: [0.18, 0.28] }
-  }[style] || { op1: 0.42, op2: 0.3, ghostOp: 0.2, glow: false, spotOp: [0, 0] };
+    foliage:   { op1: 0.4,  op2: 0.27, ghostOp: 0.18, glow: false, spotOp: [0, 0] },
+    dusk:      { op1: 0.46, op2: 0.34, ghostOp: 0.24, glow: true,  spotOp: [0.35, 0.5] },
+    clouds:    { op1: 0.5,  op2: 0.32, ghostOp: 0.17, glow: false, spotOp: [0, 0] },
+    plum:      { op1: 0.58, op2: 0.36, ghostOp: 0.14, glow: true,  spotOp: [0.24, 0.42] },
+    willow:    { op1: 0.44, op2: 0.32, ghostOp: 0.18, glow: true,  spotOp: [0.18, 0.28] }
+  }[style] || { op1: 0.4, op2: 0.27, ghostOp: 0.18, glow: false, spotOp: [0, 0] };
 
   var depth = mobile ? 4 : 5;
 
   switch (style) {
-    case 'warm':   sceneDusk(P); break;
-    case 'sky':    sceneClouds(P); break;
-    case 'night':  scenePlum(P, depth); break;
-    case 'spring': sceneWillow(P); break;
-    default:       sceneFoliage(P); break;
+    case 'dusk':    sceneDusk(P); break;
+    case 'clouds':  sceneClouds(P); break;
+    case 'plum':    scenePlum(P, depth); break;
+    case 'willow':  sceneWillow(P); break;
+    default:        sceneFoliage(P); break;
   }
 
   sL.appendChild(svg);
@@ -472,7 +473,7 @@
     }
     mkSpot(rr(30, 70), rr(10, 50), rr(20, 32), rr(0.25, 0.4));
   }
-})();
+}
 
 // ── 侧边栏：信笺索引 ──
 const toggle = document.getElementById('sidebar-toggle');
@@ -511,3 +512,117 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
     list.hidden = expanded;
   });
 });
+
+/* ============================================================
+   阅读设置：昼夜 / 素纸 / 打印 + 折痕进度
+   ============================================================ */
+(function () {
+  var root = document.documentElement;
+  var body = document.body;
+  var darkMQ = window.matchMedia('(prefers-color-scheme: dark)');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function set(k, v) { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
+
+  function sceneFor(dark) { return dark ? 'plum' : 'foliage'; }
+
+  function repaint() {
+    if (reduced) return;
+    if (root.dataset.plain === 'on') return;
+    if (body.dataset.dappled === 'off') return;
+    var scene = sceneFor(root.dataset.theme === 'dark');
+    body.dataset.scene = scene;
+    paintDappled(scene);
+  }
+
+  function clearPaint() {
+    var a = document.getElementById('dappled-shadows');
+    var b = document.getElementById('dappled-bokeh');
+    if (a) a.textContent = '';
+    if (b) b.textContent = '';
+  }
+
+  var themeBtn = document.querySelector('[data-tool="theme"]');
+  var plainBtn = document.querySelector('[data-tool="plain"]');
+  var printBtn = document.querySelector('[data-tool="print"]');
+
+  function syncTools() {
+    if (themeBtn) {
+      var dark = root.dataset.theme === 'dark';
+      themeBtn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      themeBtn.textContent = dark ? '日读' : '夜读';
+      themeBtn.setAttribute('title', dark ? '切回白天' : '夜里读信：台灯下的一小圈');
+    }
+    if (plainBtn) {
+      plainBtn.setAttribute('aria-pressed', root.dataset.plain === 'on' ? 'true' : 'false');
+    }
+  }
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      set('epistle.theme', next);
+      syncTools();
+      clearPaint();
+      repaint();
+    });
+  }
+
+  if (plainBtn) {
+    plainBtn.addEventListener('click', function () {
+      var on = root.dataset.plain === 'on';
+      if (on) { root.removeAttribute('data-plain'); set('epistle.plain', null); }
+      else { root.dataset.plain = 'on'; set('epistle.plain', 'on'); }
+      syncTools();
+      clearPaint();
+      if (!on) repaint();
+    });
+  }
+
+  if (printBtn) {
+    printBtn.addEventListener('click', function () { window.print(); });
+  }
+
+  // 系统主题变化时，只有没手动选过才跟随
+  if (darkMQ.addEventListener) {
+    darkMQ.addEventListener('change', function () {
+      if (get('epistle.theme')) return;
+      root.dataset.theme = darkMQ.matches ? 'dark' : 'light';
+      syncTools();
+      clearPaint();
+      repaint();
+    });
+  }
+
+  syncTools();
+  body.dataset.scene = sceneFor(root.dataset.theme === 'dark');
+  repaint();
+
+  // ── 折痕：读到哪一折，哪一折就松开 ──
+  var folds = Array.prototype.slice.call(document.querySelectorAll('.paper__fold'));
+  var ticking = false;
+
+  function markFolds() {
+    ticking = false;
+    if (!folds.length) return;
+    var line = window.innerHeight * 0.62;
+    for (var i = 0; i < folds.length; i++) {
+      var top = folds[i].getBoundingClientRect().top;
+      folds[i].classList.toggle('is-open', top < line);
+    }
+  }
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(markFolds);
+  }
+
+  if (folds.length) {
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    markFolds();
+  }
+})();

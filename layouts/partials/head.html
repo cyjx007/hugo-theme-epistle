@@ -1,12 +1,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  /* 首屏前定调：避免昼夜/素纸切换时的闪白 */
+  (function () {
+    var r = document.documentElement, t = null, p = null;
+    try { t = localStorage.getItem('epistle.theme'); p = localStorage.getItem('epistle.plain'); } catch (e) {}
+    var q = location.search || '';
+    var qt = q.match(/[?&]theme=(light|dark)/);
+    if (qt) { t = qt[1]; p = null; }
+    if (/[?&]plain=1/.test(q)) p = 'on';
+    var dark = t === 'dark' || (t !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    r.dataset.theme = dark ? 'dark' : 'light';
+    if (p === 'on') r.dataset.plain = 'on';
+    r.dataset.js = 'on';
+  })();
+</script>
 <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
 <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+<meta name="color-scheme" content="light dark">
 
-<!-- RSS feed discovery（Hugo 原生输出，路径为 /index.xml） -->
 <link rel="alternate" type="application/rss+xml" href="{{ "index.xml" | absURL }}" title="{{ .Site.Title }}">
 
-<!-- Open Graph / Telegram / 社交预览 -->
 {{- $ogTitle := cond .IsHome .Site.Title (printf "%s — %s" .Title .Site.Title) }}
 {{- $ogDesc := .Description | default .Site.Params.description }}
 {{- $ogURL := .Permalink }}
@@ -34,19 +48,12 @@
 <meta name="twitter:image" content="{{ . }}">
 {{- end }}
 
-<!-- Heti 中文排版 -->
-<link rel="stylesheet" href="//unpkg.com/heti/umd/heti.min.css">
-
-<!-- Epistle 主样式 -->
-{{- $assetVersion := now.Unix -}}
+{{- $assetVersion := now.Unix }}
+<link rel="stylesheet" href="{{ "vendor/heti/heti.min.css" | relURL }}?v={{ $assetVersion }}">
 <link rel="stylesheet" href="{{ "css/main.css" | relURL }}?v={{ $assetVersion }}">
-
-<!-- 自定义样式（站点 static/css/custom.css，存在时加载） -->
 {{ if fileExists "static/css/custom.css" -}}
 <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}?v={{ $assetVersion }}">
 {{- end }}
-
-<!-- 站点显式配置时才加载外部字体；主题默认使用系统安全字体。 -->
 {{ with .Site.Params.googleFonts }}
 <link href="{{ . }}" rel="stylesheet">
 {{ end }}
