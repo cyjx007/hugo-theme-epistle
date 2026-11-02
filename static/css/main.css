@@ -298,7 +298,8 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 .lamp {
   position: fixed;
   inset: 0;
-  z-index: 3;
+  /* 0 = 压在树影之上、信纸之下：只把桌面四周压暗，别把正文也一起调暗 */
+  z-index: 0;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.8s var(--ease);
