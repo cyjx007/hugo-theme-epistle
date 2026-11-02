@@ -52,7 +52,9 @@
 
   {{- if $p.IsPage }}
   {{ partial "correspondence.html" $p }}
+  {{- end }}
 
+  {{- if $isPost }}
   <nav class="letter-nav" aria-label="信件导航">
     {{ with $p.PrevInSection }}
     <a href="{{ .Permalink }}" class="letter-nav__link letter-nav__link--prev" rel="prev">

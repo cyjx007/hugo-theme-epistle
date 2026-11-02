@@ -446,7 +446,7 @@ function paintDappled(style) {
 
   // ── Dispatch ──
   var P = {
-    foliage:   { op1: 0.4,  op2: 0.27, ghostOp: 0.18, glow: false, spotOp: [0, 0] },
+    foliage:   { op1: 0.32, op2: 0.2,  ghostOp: 0.15, glow: false, spotOp: [0, 0] },
     dusk:      { op1: 0.46, op2: 0.34, ghostOp: 0.24, glow: true,  spotOp: [0.35, 0.5] },
     clouds:    { op1: 0.5,  op2: 0.32, ghostOp: 0.17, glow: false, spotOp: [0, 0] },
     plum:      { op1: 0.58, op2: 0.36, ghostOp: 0.14, glow: true,  spotOp: [0.24, 0.42] },
