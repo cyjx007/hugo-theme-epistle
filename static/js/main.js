@@ -528,6 +528,15 @@ if (toggle && sidebar && overlay) {
   overlay.addEventListener('click', closeSidebar);
 }
 
+/* Esc 关抽屉，焦点还给「信匣」按钮 */
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (sidebar && sidebar.classList.contains('is-open')) {
+    closeSidebar();
+    if (toggle) toggle.focus();
+  }
+});
+
 // ── 侧边栏：年份折叠 ──
 document.querySelectorAll('.year-toggle').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -630,7 +639,12 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
   }
 
   if (printBtn) {
-    printBtn.addEventListener('click', function () { window.print(); });
+    printBtn.addEventListener('click', function () {
+      /* 抽屉开着时 body 被 lockBodyScroll() 写死了 position:fixed，
+         @media print 压不过内联样式，打印只会出当前一屏——先关掉（顺带解锁） */
+      if (sidebar && sidebar.classList.contains('is-open')) closeSidebar();
+      window.print();
+    });
   }
 
   // 系统主题变化时，只有没手动选过才跟随
@@ -692,9 +706,11 @@ document.querySelectorAll('.year-toggle').forEach(btn => {
 
   buildFolds();
   window.addEventListener('scroll', onScroll, { passive: true });
+  /* 手机上地址栏收起/弹出会连续触发 resize，每次重建折痕等于每帧强制同步布局 */
+  var resizeTimer = 0;
   window.addEventListener('resize', function () {
-    buildFolds();
-    onScroll();
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { buildFolds(); onScroll(); }, 150);
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildFolds);
 })();
@@ -705,8 +721,3 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
-
-// ── 切到后台就停下背景漂移，别在看不见的时候还占 GPU ──
-document.addEventListener('visibilitychange', () => {
-  document.body.classList.toggle('is-tab-hidden', document.hidden);
-});

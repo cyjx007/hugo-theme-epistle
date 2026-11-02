@@ -1,4 +1,4 @@
-{{/* 诗歌排版短代码 - 使用赫蹏 heti--poetry 样式 */}}
-<div class="heti--poetry">
+{{/* 诗歌排版短代码 - 使用赫蹏 heti--poetry 样式（heti 基类不能少，否则丢字号/宽度，autoSpacing 也不会处理它） */}}
+<div class="heti heti--poetry">
 {{ .Inner | markdownify }}
 </div>

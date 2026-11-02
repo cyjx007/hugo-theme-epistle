@@ -1,4 +1,4 @@
-<nav class="archive" id="sidebar" aria-label="信件归档">
+<nav class="archive" aria-label="信件归档">
   <h2 class="archive-title">往来书信</h2>
   {{- $mainSections := .Site.Params.mainSections | default (slice "posts") -}}
   {{- $pages := where .Site.RegularPages "Section" "in" $mainSections -}}

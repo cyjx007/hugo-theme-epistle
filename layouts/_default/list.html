@@ -13,6 +13,9 @@
       <a href="{{ "/posts/" | relURL }}">打开信匣 →</a>
     </div>
     {{- end -}}
+  {{- else -}}
+    {{- /* 一篇已发布的信都没有（全被 draft 掉了，或者刚建站）：别让首页空白 */ -}}
+    <p class="home-empty">匣子还空着。<a href="{{ "/posts/" | relURL }}">去信匣看看</a>，或者先写一封。</p>
   {{- end -}}
 {{- else -}}
   {{- $pages := .Pages -}}

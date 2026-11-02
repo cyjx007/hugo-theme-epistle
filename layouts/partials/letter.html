@@ -9,7 +9,7 @@
     {{- if eq $q.RelPermalink $p.RelPermalink -}}{{- $n = add $i 1 -}}{{- end -}}
   {{- end -}}
 {{- end -}}
-<article class="letter {{ $hetiClass }}" id="top">
+<article class="letter {{ $hetiClass }}">
   <div class="print-head" aria-hidden="true">
     <div class="print-head__row">
       <span class="print-head__brand">{{ $p.Site.Title }}{{ with $p.Site.Params.tagline }} · {{ . }}{{ end }}</span>
@@ -23,7 +23,10 @@
     <span class="letter-header__rule" aria-hidden="true"></span>
   </header>
 
-  {{ with $p.Params.salutation }}
+  {{- /* 没有写 salutation 就用站点默认（hugo.toml 的 params.letter.salutationDefault） */ -}}
+  {{- $salutation := $p.Params.salutation -}}
+  {{- if not $salutation }}{{ with $p.Site.Params.letter }}{{ $salutation = .salutationDefault }}{{ end }}{{ end -}}
+  {{ with $salutation }}
   <p class="salutation">{{ . }}</p>
   {{ end }}
 

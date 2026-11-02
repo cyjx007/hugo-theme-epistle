@@ -551,12 +551,6 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 }
 [data-plain="on"] .paper::after { display: none; }
 
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .paper {
-    background: color-mix(in srgb, var(--paper) 94%, transparent);
-  }
-}
-
 /* 折痕：每个小标题前压一道折线。读过去之后，压痕松开（淡掉） */
 .paper__fold {
   position: absolute;
@@ -629,14 +623,15 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   font-size: 1rem;
 }
 
-/* Heti 接管后的正文 */
-.letter-body.heti p {
+/* Heti 接管后的正文：heti 类在 <article class="letter heti"> 上，.letter-body 是它里面的 div，
+   所以这里必须用后代选择器（写成 .letter-body.heti 永远不会命中） */
+.letter .letter-body p {
   margin-block: 0 1.5em;
   text-align: justify;
   text-justify: inter-ideograph;
 }
 
-.letter-body.heti p:last-child { margin-bottom: 0; }
+.letter .letter-body p:last-child { margin-bottom: 0; }
 
 .letter-body h1,
 .letter-body h2,
@@ -913,11 +908,18 @@ body[data-dappled="off"] .dappled-layer { display: none; }
   overflow-y: auto;
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
   transform: translateX(100%);
-  transition: transform 0.35s var(--ease);
+  /* 关着的时候连 Tab 都进不去：抽屉在 DOM 里排在正文之前，
+     只用 transform 挪走的话，键盘用户得先 Tab 穿过整个归档 */
+  visibility: hidden;
+  transition: transform 0.35s var(--ease), visibility 0s linear 0.35s;
   display: flex;
   flex-direction: column;
 }
-.sidebar.is-open { transform: translateX(0); }
+.sidebar.is-open {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.35s var(--ease);
+}
 
 .archive { flex: 1; }
 
@@ -1145,6 +1147,18 @@ body[data-dappled="off"] .dappled-layer { display: none; }
 }
 .home-more a { color: var(--accent); text-decoration: none; }
 .home-more a:hover { text-decoration: underline; }
+
+/* 一篇已发布的信都没有时的首页 */
+.home-empty {
+  max-width: var(--width-content);
+  margin: 4rem auto;
+  text-align: center;
+  color: var(--meta);
+  font-size: 0.95rem;
+  line-height: 1.9;
+}
+.home-empty a { color: var(--accent); text-decoration: none; }
+.home-empty a:hover { text-decoration: underline; }
 
 /* ── 10. 响应式 ─────────────────────────────────────────── */
 @media (max-width: 900px) {

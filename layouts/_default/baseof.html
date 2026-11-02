@@ -8,8 +8,8 @@
 {{- if isset .Site.Params "dappledlight" -}}
   {{- $dappledEnabled = .Site.Params.dappledLight -}}
 {{- end -}}
-<body class="{{ if eq .Section "guestbook" }}page-guestbook{{ end }}" style="--age: {{ $age }}" data-dappled="{{ if $dappledEnabled }}on{{ else }}off{{ end }}" data-scene="foliage">
-  <a class="skip-link" href="#top">跳到正文</a>
+<body id="top" class="{{ if eq .Section "guestbook" }}page-guestbook{{ end }}" style="--age: {{ $age }}" data-dappled="{{ if $dappledEnabled }}on{{ else }}off{{ end }}" data-scene="foliage">
+  <a class="skip-link" href="#main">跳到正文</a>
   <div class="dappled-layer" aria-hidden="true">
     <div class="dappled-layer__wash"></div>
     <div class="dappled-layer__shadows" id="dappled-shadows"></div>
@@ -25,13 +25,13 @@
       {{- partial "sidebar.html" . -}}
     </aside>
     <div class="layout">
-      <main class="paper" role="main">
+      <main class="paper" id="main" tabindex="-1" role="main">
         {{- block "main" . }}{{- end }}
       </main>
     </div>
     {{- partial "footer.html" . -}}
   </div>
-  <script src="{{ "vendor/heti/heti-addon.min.js" | relURL }}"></script>
+  <script src="{{ "vendor/heti/heti-addon.min.js" | relURL }}?v={{ now.Unix }}"></script>
   <script>
     if (window.Heti) { new Heti('.heti').autoSpacing(); }
   </script>
