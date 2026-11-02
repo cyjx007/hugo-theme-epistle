@@ -31,10 +31,10 @@
   --ink-aged: #5A5242;
   /* 小字（日期、注） */
   --meta-fresh: #7B7566;
-  --meta-aged: #948B77;
+  --meta-aged: #6E6656; /* 旧信上也别掉到 4.5:1 以下 */
   /* 朱墨（链接、印记） */
   --accent-fresh: #9A3B2A;
-  --accent-aged: #A9705A;
+  --accent-aged: #8E4B33;
 
   --desk: #E7E1D6;
   --desk-glow: #F4EFE6;
